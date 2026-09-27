@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CodeVault · C++ 题解站</title>
-<link rel="stylesheet" href="css/style.css?v=1.4" />
+<title>墨语 · 个人博客</title>
+<link rel="stylesheet" href="css/style.css?v=1.5" />
 <!-- Markdown 解析与代码高亮（CDN，联网时生效） -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css" id="hljs-theme" />
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
@@ -15,14 +15,14 @@
 <header class="topbar">
   <div class="brand">
     <span class="logo-dot"></span>
-    <h1>CodeVault</h1>
-    <span class="brand-sub">C++ 题解站</span>
+    <h1>墨语</h1>
+    <span class="brand-sub">个人博客 · 信息分享</span>
   </div>
 
   <div class="topbar-actions">
     <div class="search-box">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input id="searchInput" type="text" placeholder="搜索题解标题、标签、内容…" autocomplete="off" />
+      <input id="searchInput" type="text" placeholder="搜索文章标题、标签、内容…" autocomplete="off" />
       <kbd>/</kbd>
     </div>
 
@@ -35,12 +35,12 @@
 
 <!-- 主体布局 -->
 <div class="layout">
-  <!-- 左侧：题解列表 -->
+  <!-- 左侧：文章列表 -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="stat-pill">
         <span class="stat-num" id="totalCount">0</span>
-        <span class="stat-label">篇题解</span>
+        <span class="stat-label">篇文章</span>
       </div>
       <div class="stat-pill">
         <span class="stat-num" id="readCount">0</span>
@@ -65,8 +65,8 @@
     <div class="solution-list" id="solutionList"></div>
     <div class="empty-hint" id="emptyHint">
       <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
-      <p>暂无题解</p>
-      <p class="hint-sub">题解由站长维护，敬请期待</p>
+      <p>暂无文章</p>
+      <p class="hint-sub">文章由站长维护，敬请期待</p>
     </div>
   </aside>
 
@@ -81,16 +81,16 @@
     <article class="doc" id="docArea">
       <div class="welcome" id="welcome">
         <div class="welcome-hero">
-          <h2>欢迎使用 CodeVault</h2>
-          <p>一个专为 C++ 题解打造的离线阅读器 · 支持文件夹扫描、全文检索、标签筛选、目录导航、代码复制与收藏</p>
+          <h2>欢迎来到墨语</h2>
+          <p>一个专注于记录与分享的个人博客 · 支持全文检索、标签分类、目录导航、阅读进度与收藏</p>
         </div>
         <div class="features">
-          <div class="feature"><span class="f-num">01</span><h4>文件夹扫描</h4><p>选择本地任意文件夹，自动识别 .md 题解文件并解析元信息</p></div>
+          <div class="feature"><span class="f-num">01</span><h4>文章阅读</h4><p>精选 Markdown 排版，支持代码高亮、数学公式与表格</p></div>
           <div class="feature"><span class="f-num">02</span><h4>全文检索</h4><p>标题、标签、正文一键搜索，结果高亮定位</p></div>
-          <div class="feature"><span class="f-num">03</span><h4>代码高亮</h4><p>C++ 语法高亮、一键复制、行号显示</p></div>
+          <div class="feature"><span class="f-num">03</span><h4>标签分类</h4><p>按主题、分类快速过滤，找到你感兴趣的内容</p></div>
           <div class="feature"><span class="f-num">04</span><h4>目录导航</h4><p>自动生成文章目录，滚动联动高亮</p></div>
-          <div class="feature"><span class="f-num">05</span><h4>标签筛选</h4><p>按难度、算法、题型快速过滤</p></div>
-          <div class="feature"><span class="f-num">06</span><h4>阅读进度</h4><p>自动记录已读与收藏，支持暗色/亮色主题</p></div>
+          <div class="feature"><span class="f-num">05</span><h4>阅读进度</h4><p>自动记录已读与未读，支持暗色/亮色主题切换</p></div>
+          <div class="feature"><span class="f-num">06</span><h4>本地收藏</h4><p>收藏的文章编号保存在浏览器本地，随时回看</p></div>
         </div>
       </div>
     </article>
@@ -106,7 +106,7 @@
 <!-- Toast 提示 -->
 <div id="toast" class="toast"></div>
 
-<script src="js/samples.js?v=1.4"></script>
-<script src="js/app.js?v=1.4"></script>
+<script src="js/samples.js?v=1.5"></script>
+<script src="js/app.js?v=1.5"></script>
 </body>
 </html>

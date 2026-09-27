@@ -1,6 +1,6 @@
 /* =====================================================================
- * CodeVault - C++ 题解站 核心逻辑
- * 功能：文件夹扫描 / Markdown 解析 / 全文检索 / 标签筛选 /
+ * 墨语 - 个人博客核心逻辑
+ * 功能：Markdown 解析 / 全文检索 / 标签分类 /
  *       目录导航 / 代码复制 / 收藏 / 阅读进度 / 主题切换 / 统计
  * ===================================================================== */
 
@@ -9,7 +9,7 @@
 
   /* ---------------- 状态 ---------------- */
   const state = {
-    solutions: [],        // {id, title, difficulty, tags, content, raw}
+    posts: [],            // {id, title, category, tags, content, raw}
     currentId: null,
     view: 'all',          // all | fav | unread
     activeTag: null,
@@ -87,15 +87,15 @@
 
   /* ---------------- Markdown 元信息解析 ---------------- */
   function parseMeta(md) {
-    const meta = { title: '', difficulty: '', tags: [] };
+    const meta = { title: '', category: '', tags: [] };
     const m = md.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
     if (m) {
       const block = m[1];
       const titleM = block.match(/^title:\s*(.+)$/m);
-      const diffM = block.match(/^difficulty:\s*(.+)$/m);
+      const catM = block.match(/^category:\s*(.+)$/m) || block.match(/^difficulty:\s*(.+)$/m);
       const tagsM = block.match(/^tags:\s*\[([^\]]*)\]/m);
       if (titleM) meta.title = titleM[1].trim().replace(/^["']|["']$/g, '');
-      if (diffM) meta.difficulty = diffM[1].trim();
+      if (catM) meta.category = catM[1].trim();
       if (tagsM) meta.tags = tagsM[1].split(',').map(s => s.trim()).filter(Boolean);
       meta.content = md.slice(m[0].length);
     } else {
@@ -220,9 +220,9 @@
     });
   }
 
-  /* ---------------- 渲染题解列表 ---------------- */
+  /* ---------------- 渲染文章列表 ---------------- */
   function getFiltered() {
-    let list = state.solutions.slice();
+    let list = state.posts.slice();
     if (state.view === 'fav') list = list.filter(s => state.fav.has(s.id));
     else if (state.view === 'unread') list = list.filter(s => !state.read.has(s.id));
     if (state.activeTag) list = list.filter(s => s.tags.includes(state.activeTag));
@@ -238,14 +238,10 @@
   }
 
   function diffClass(d) {
-    d = (d || '').toLowerCase();
-    if (d === 'easy' || d === '简单') return 'diff-easy';
-    if (d === 'hard' || d === '困难') return 'diff-hard';
-    return 'diff-medium';
+    return 'cat-badge';
   }
   function diffLabel(d) {
-    const map = { easy: '简单', medium: '中等', hard: '困难', '简单': '简单', '中等': '中等', '困难': '困难' };
-    return map[(d || '').toLowerCase()] || d || '中等';
+    return d || '未分类';
   }
 
   function renderList() {
@@ -267,8 +263,8 @@
         style: 'animation-delay:' + (i * 0.03) + 's',
         role: 'button',
         tabindex: '0',
-        onclick: () => openSolution(s.id),
-        onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSolution(s.id); } }
+        onclick: () => openPost(s.id),
+        onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPost(s.id); } }
       });
 
       const titleRow = el('div', { class: 'si-title' });
@@ -277,7 +273,7 @@
       item.appendChild(titleRow);
 
       const meta = el('div', { class: 'si-meta' });
-      const diff = el('span', { class: 'si-diff ' + diffClass(s.difficulty) }, diffLabel(s.difficulty));
+      const diff = el('span', { class: 'si-diff ' + diffClass(s.category) }, diffLabel(s.category));
       const readIcon = state.read.has(s.id) ? '✓ 已读' : '○ 未读';
       meta.appendChild(diff);
       meta.appendChild(el('span', {}, readIcon));
@@ -297,7 +293,7 @@
 
   /* ---------------- 统计 ---------------- */
   function updateStats() {
-    $('#totalCount').textContent = state.solutions.length;
+    $('#totalCount').textContent = state.posts.length;
     $('#readCount').textContent = state.read.size;
     $('#favCount').textContent = state.fav.size;
   }
@@ -306,7 +302,7 @@
   function renderTagCloud() {
     const cloud = $('#tagCloud');
     const tagCount = {};
-    state.solutions.forEach(s => s.tags.forEach(t => { tagCount[t] = (tagCount[t] || 0) + 1; }));
+    state.posts.forEach(s => s.tags.forEach(t => { tagCount[t] = (tagCount[t] || 0) + 1; }));
     const tags = Object.entries(tagCount).sort((a, b) => b[1] - a[1]);
 
     cloud.innerHTML = '';
@@ -324,9 +320,9 @@
     });
   }
 
-  /* ---------------- 打开题解 ---------------- */
-  function openSolution(id) {
-    const s = state.solutions.find(x => x.id === id);
+  /* ---------------- 打开文章 ---------------- */
+  function openPost(id) {
+    const s = state.posts.find(x => x.id === id);
     if (!s) return;
     state.currentId = id;
     state.read.add(id);
@@ -340,7 +336,7 @@
     header.appendChild(el('h1', {}, s.title || '无标题'));
 
     const meta = el('div', { class: 'doc-meta' });
-    meta.appendChild(el('span', { class: 'chip si-diff ' + diffClass(s.difficulty) }, diffLabel(s.difficulty)));
+    meta.appendChild(el('span', { class: 'chip si-diff ' + diffClass(s.category) }, diffLabel(s.category)));
     s.tags.forEach(t => meta.appendChild(el('span', { class: 'chip' }, '# ' + t)));
     header.appendChild(meta);
 
@@ -353,7 +349,7 @@
       class: 'btn btn-ghost',
       onclick: () => {
         if (state.read.has(id)) state.read.delete(id); else state.read.add(id);
-        saveState(); renderList(); openSolution(id);
+        saveState(); renderList(); openPost(id);
       }
     }, state.read.has(id) ? '标记为未读' : '标记为已读');
     actions.appendChild(favBtn);
@@ -381,7 +377,7 @@
     saveState();
     renderList();
     renderTagCloud();
-    if (state.currentId === id) openSolution(id);
+    if (state.currentId === id) openPost(id);
   }
 
   /* ---------------- 搜索高亮 ---------------- */
@@ -402,35 +398,35 @@
 
   /* ---------------- 文件夹扫描 ---------------- */
   function loadFromSamples() {
-    if (window.SAMPLE_SOLUTIONS) {
-      addSolutions(window.SAMPLE_SOLUTIONS.map(s => ({ id: s.id, raw: s.content })));
-      toast('已加载 ' + window.SAMPLE_SOLUTIONS.length + ' 篇内置题解');
+    if (window.SAMPLE_POSTS) {
+      addPosts(window.SAMPLE_POSTS.map(s => ({ id: s.id, raw: s.content })));
+      toast('已加载 ' + window.SAMPLE_POSTS.length + ' 篇示例文章');
     }
   }
 
-  function addSolutions(items) {
+  function addPosts(items) {
     items.forEach(item => {
       const meta = parseMeta(item.raw);
       const id = item.id || uid();
       // 避免重复：同标题覆盖
-      const existIdx = state.solutions.findIndex(s => s.id === id || s.title === meta.title);
+      const existIdx = state.posts.findIndex(s => s.id === id || s.title === meta.title);
       const sol = {
         id,
         title: meta.title || '无标题',
-        difficulty: meta.difficulty,
+        category: meta.category,
         tags: meta.tags,
         content: meta.content,
         raw: item.raw,
       };
-      if (existIdx >= 0) state.solutions[existIdx] = sol;
-      else state.solutions.push(sol);
+      if (existIdx >= 0) state.posts[existIdx] = sol;
+      else state.posts.push(sol);
     });
     renderList();
     renderTagCloud();
-    // 恢复上次阅读的题解，若不存在则打开第一篇
-    if (state.solutions.length) {
-      const currentExists = state.solutions.some(s => s.id === state.currentId);
-      openSolution(currentExists ? state.currentId : state.solutions[0].id);
+    // 恢复上次阅读的文章，若不存在则打开第一篇
+    if (state.posts.length) {
+      const currentExists = state.posts.some(s => s.id === state.currentId);
+      openPost(currentExists ? state.currentId : state.posts[0].id);
     }
   }
 
@@ -443,7 +439,7 @@
       timer = setTimeout(() => {
         state.searchQuery = input.value.trim();
         renderList();
-        if (state.currentId) openSolution(state.currentId);
+        if (state.currentId) openPost(state.currentId);
       }, 200);
     });
     // 快捷键 /
@@ -468,12 +464,12 @@
     });
   }
 
-  /* ---------------- 从静态目录加载题解（适合部署到静态托管） ---------------- */
-  // 在站点根目录放置 solutions/manifest.json，内容为 { "files": ["a.md", "b.md"] }
+  /* ---------------- 从静态目录加载文章（适合部署到静态托管） ---------------- */
+  // 在站点根目录放置 posts/manifest.json，内容为 { "files": ["a.md", "b.md"] }
   // 站点会自动 fetch 这些 .md 文件并加载，访问者无需手动上传
   async function loadFromManifest() {
     try {
-      const resp = await fetch('solutions/manifest.json', { cache: 'no-store' });
+      const resp = await fetch('posts/manifest.json', { cache: 'no-store' });
       if (!resp.ok) return false;
       const manifest = await resp.json();
       if (!manifest || !Array.isArray(manifest.files)) return false;
@@ -481,7 +477,7 @@
       const items = [];
       for (const file of manifest.files) {
         try {
-          const r = await fetch('solutions/' + file, { cache: 'no-store' });
+          const r = await fetch('posts/' + file, { cache: 'no-store' });
           if (r.ok) {
             const text = await r.text();
             items.push({ id: file.replace(/\.md$/i, ''), raw: text });
@@ -489,8 +485,8 @@
         } catch (e) {}
       }
       if (items.length) {
-        addSolutions(items);
-        toast('已从 solutions/ 目录加载 ' + items.length + ' 篇题解');
+        addPosts(items);
+        toast('已从 posts/ 目录加载 ' + items.length + ' 篇文章');
         return true;
       }
     } catch (e) {}
@@ -506,10 +502,10 @@
     setupTabs();
     setupScrollSpy();
 
-    // 题解固定从 solutions/ 目录加载（访客只能查看，不能上传）
-    // 若 solutions/ 目录加载失败，则回退到内置示例
+    // 文章固定从 posts/ 目录加载（访客只能查看，不能上传）
+    // 若 posts/ 目录加载失败，则回退到内置示例
     const loaded = await loadFromManifest();
-    if (!loaded && state.solutions.length === 0) {
+    if (!loaded && state.posts.length === 0) {
       loadFromSamples();
     }
   }

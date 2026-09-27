@@ -1,514 +1,313 @@
-// 内置示例题解（Markdown 字符串）
-// 每篇题解顶部使用 --- 包裹的元信息块：title / difficulty / tags
-window.SAMPLE_SOLUTIONS = [
+// 内置示例文章（Markdown 字符串）
+// 每篇文章顶部使用 --- 包裹的元信息块：title / category / tags
+window.SAMPLE_POSTS = [
   {
-    id: "two-sum",
+    id: "why-static-blog",
     content: `---
-title: 两数之和
-difficulty: easy
-tags: [数组, 哈希表]
+title: 为什么我选择了静态博客
+category: 技术
+tags: [博客, 静态网站, Web]
 ---
 
-# 两数之和
+# 为什么我选择了静态博客
 
-## 题目描述
+在搭建个人博客时，我面临过很多选择：WordPress、Hexo、Hugo，甚至自己从零写一个。最终，我选择了**纯静态博客**这条路。
 
-给定一个整数数组 \`nums\` 和一个整数目标值 \`target\`，请你在该数组中找出 **和为目标值** \`target\` 的那两个整数，并返回它们的数组下标。
+## 静态博客的优势
 
-你可以假设每种输入只会对应一个答案，并且你不能使用两次相同的元素。
+### 1. 极致的性能
 
-## 示例
+静态网站没有数据库查询，没有服务端渲染，每个页面都是预先生成好的 HTML 文件。这意味着：
+
+- 响应速度极快，首屏加载几乎瞬间完成
+- 可以轻松应对高并发，不会因为流量突增而宕机
+- CDN 缓存效率极高
+
+### 2. 部署简单
+
+静态文件可以托管在任何地方：
 
 \`\`\`
-输入：nums = [2,7,11,15], target = 9
-输出：[0,1]
-解释：因为 nums[0] + nums[1] == 9 ，返回 [0, 1] 。
+GitHub Pages · Vercel · Netlify · Cloudflare Pages
 \`\`\`
 
-## 解题思路
+无需配置服务器、数据库、PHP 环境，一个 \`index.html\` 加上资源文件就能跑起来。
 
-### 方法一：暴力枚举
+### 3. 安全无忧
 
-两层循环遍历所有数对，时间复杂度 $O(n^2)$，空间复杂度 $O(1)$。
+没有数据库，没有后台登录，黑客几乎无从下手。即使被 DDoS，CDN 也能扛住大部分流量。
 
-### 方法二：哈希表（推荐）
+## 缺点与取舍
 
-遍历数组时，用哈希表记录已访问数字及其下标。对于当前元素 \`x\`，检查 \`target - x\` 是否在哈希表中：
-- 若存在，直接返回两个下标；
-- 若不存在，将当前元素存入哈希表。
+当然，静态博客也不是完美的：
 
-时间复杂度 $O(n)$，空间复杂度 $O(n)$。
+- **评论系统**：需要借助第三方服务（如 Giscus、Disqus）
+- **搜索功能**：需要客户端实现或接入 Algolia
+- **动态内容**：不适合需要实时数据的场景
 
-## 代码实现
+但对于一个以**记录与分享**为主的个人博客来说，这些都不是问题。
 
-\`\`\`cpp
-class Solution {
-public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-        unordered_map<int, int> mp;
-        for (int i = 0; i < nums.size(); ++i) {
-            int need = target - nums[i];
-            if (mp.count(need)) {
-                return {mp[need], i};
-            }
-            mp[nums[i]] = i;
-        }
-        return {};
-    }
-};
-\`\`\`
+## 总结
 
-## 复杂度分析
+> 简单、快速、安全——这就是静态博客吸引我的地方。
 
-| 方法 | 时间复杂度 | 空间复杂度 |
-|------|-----------|-----------|
-| 暴力枚举 | $O(n^2)$ | $O(1)$ |
-| 哈希表 | $O(n)$ | $O(n)$ |
-
-> 哈希表是解决「查找类」问题的利器，把线性查找降到常数级。
+如果你也想搭建一个自己的博客，不妨从静态方案开始。用 Markdown 写作，用 Git 管理版本，享受纯粹的创作乐趣。
 `
   },
   {
-    id: "longest-substring",
+    id: "efficient-learning",
     content: `---
-title: 无重复字符的最长子串
-difficulty: medium
-tags: [字符串, 滑动窗口, 哈希表]
+title: 关于高效学习的几点思考
+category: 随笔
+tags: [学习方法, 成长, 思考]
 ---
 
-# 无重复字符的最长子串
+# 关于高效学习的几点思考
 
-## 题目描述
+这些年读过不少书，也踩过不少坑。关于"如何高效学习"，我有一些自己的体会。
 
-给定一个字符串 \`s\`，请你找出其中不含有重复字符的 **最长子串** 的长度。
+## 一、主动输出比被动输入更重要
 
-## 示例
+很多人喜欢"收藏"和"囤课"，仿佛买了就等于学会了。但实际上：
 
-\`\`\`
-输入: s = "abcabcbb"
-输出: 3
-解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
-\`\`\`
+> 你以为你在学习，其实你只是在消费信息。
 
-## 解题思路
+真正的学习发生在**输出**的那一刻——写一篇笔记、做一次分享、解决一个实际问题。只有当你尝试用自己的话解释一个概念时，才会发现自己哪里没懂。
 
-使用**滑动窗口**思想：维护一个窗口 \`[left, right]\`，保证窗口内字符不重复。
+## 二、间隔重复与遗忘曲线
 
-1. 用哈希表记录每个字符最后出现的位置；
-2. 右指针 \`right\` 不断右移扩展窗口；
-3. 若当前字符已在窗口内出现，则将左指针 \`left\` 移动到重复字符的下一位；
-4. 过程中更新最大窗口长度。
+艾宾浩斯遗忘曲线告诉我们：
 
-## 代码实现
-
-\`\`\`cpp
-class Solution {
-public:
-    int lengthOfLongestSubstring(string s) {
-        unordered_map<char, int> last;
-        int ans = 0, left = 0;
-        for (int right = 0; right < s.size(); ++right) {
-            char c = s[right];
-            if (last.count(c) && last[c] >= left) {
-                left = last[c] + 1;
-            }
-            last[c] = right;
-            ans = max(ans, right - left + 1);
-        }
-        return ans;
-    }
-};
-\`\`\`
-
-## 复杂度分析
-
-- **时间复杂度**：$O(n)$，每个字符最多被访问两次。
-- **空间复杂度**：$O(\\Sigma)$，$\\Sigma$ 为字符集大小。
-
-## 扩展思考
-
-如果字符集为 ASCII，可以用 \`int[128]\` 代替 \`unordered_map\`，常数更小。
-`
-  },
-  {
-    id: "merge-k-sorted",
-    content: `---
-title: 合并 K 个升序链表
-difficulty: hard
-tags: [链表, 堆, 分治]
----
-
-# 合并 K 个升序链表
-
-## 题目描述
-
-给你一个链表数组，每个链表都已经按升序排列。请你将所有链表合并到一个升序链表中，返回合并后的链表。
-
-## 示例
-
-\`\`\`
-输入：lists = [[1,4,5],[1,3,4],[2,6]]
-输出：[1,1,2,3,4,4,5,6]
-\`\`\`
-
-## 解题思路
-
-### 方法一：小顶堆
-
-维护一个大小为 $k$ 的小顶堆，每次取出堆顶节点加入结果，并将该节点的 \`next\` 入堆。
-
-### 方法二：分治合并
-
-类似归并排序，两两合并链表，时间复杂度更优。
-
-## 代码实现（小顶堆）
-
-\`\`\`cpp
-class Solution {
-public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        auto cmp = [](ListNode* a, ListNode* b) {
-            return a->val > b->val;
-        };
-        priority_queue<ListNode*, vector<ListNode*>, decltype(cmp)> pq(cmp);
-
-        for (auto node : lists) {
-            if (node) pq.push(node);
-        }
-
-        ListNode dummy(0), *tail = &dummy;
-        while (!pq.empty()) {
-            ListNode* cur = pq.top(); pq.pop();
-            tail->next = cur;
-            tail = cur;
-            if (cur->next) pq.push(cur->next);
-        }
-        return dummy.next;
-    }
-};
-\`\`\`
-
-## 复杂度分析
-
-- **时间复杂度**：$O(N \\log k)$，$N$ 为节点总数，$k$ 为链表数。
-- **空间复杂度**：$O(k)$，堆的大小。
-
-> 当 $k$ 较大时，分治法的常数因子更小，实际运行更快。
-`
-  },
-  {
-    id: "binary-tree-level-order",
-    content: `---
-title: 二叉树的层序遍历
-difficulty: medium
-tags: [树, 广度优先搜索, 队列]
----
-
-# 二叉树的层序遍历
-
-## 题目描述
-
-给你二叉树的根节点 \`root\`，返回其节点值的 **层序遍历**（即逐层地，从左到右访问所有节点）。
-
-## 解题思路
-
-使用**队列**实现 BFS。每一轮处理当前层的所有节点，记录节点值，并将子节点入队。
-
-关键技巧：在每一层开始时记录队列长度，即可确定当前层有多少节点。
-
-## 代码实现
-
-\`\`\`cpp
-class Solution {
-public:
-    vector<vector<int>> levelOrder(TreeNode* root) {
-        vector<vector<int>> ans;
-        if (!root) return ans;
-
-        queue<TreeNode*> q;
-        q.push(root);
-
-        while (!q.empty()) {
-            int size = q.size();
-            vector<int> level;
-            for (int i = 0; i < size; ++i) {
-                TreeNode* node = q.front(); q.pop();
-                level.push_back(node->val);
-                if (node->left)  q.push(node->left);
-                if (node->right) q.push(node->right);
-            }
-            ans.push_back(level);
-        }
-        return ans;
-    }
-};
-\`\`\`
-
-## 复杂度分析
-
-- **时间复杂度**：$O(n)$，每个节点访问一次。
-- **空间复杂度**：$O(n)$，队列最多存储一层节点。
-
-## 相关题目
-
-- 二叉树的锯齿形层序遍历
-- 二叉树的最大深度
-- N 叉树的层序遍历
-`
-  },
-  {
-    id: "knapsack-01",
-    content: `---
-title: 0-1 背包问题
-difficulty: medium
-tags: [动态规划, 背包]
----
-
-# 0-1 背包问题
-
-## 问题描述
-
-有 $n$ 件物品和一个容量为 $W$ 的背包。第 $i$ 件物品的重量为 $w_i$，价值为 $v_i$。每件物品只能选一次，求背包能装下的最大价值。
-
-## 状态定义
-
-\`dp[i][j]\` 表示前 $i$ 件物品放入容量为 $j$ 的背包能获得的最大价值。
-
-## 状态转移
-
-$$dp[i][j] = \\max(dp[i-1][j],\\ dp[i-1][j-w_i] + v_i)$$
-
-- 不选第 $i$ 件：\`dp[i-1][j]\`
-- 选第 $i$ 件：\`dp[i-1][j-w_i] + v_i\`（需 $j \\geq w_i$）
-
-## 空间优化
-
-观察到第 $i$ 行只依赖第 $i-1$ 行，可使用一维数组并**倒序遍历**容量：
-
-\`\`\`cpp
-int knapsack(int W, vector<int>& w, vector<int>& v) {
-    int n = w.size();
-    vector<int> dp(W + 1, 0);
-    for (int i = 0; i < n; ++i) {
-        for (int j = W; j >= w[i]; --j) {
-            dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
-        }
-    }
-    return dp[W];
-}
-\`\`\`
-
-> 倒序遍历是为了保证每件物品只被使用一次。
-
-## 复杂度
-
-| 维度 | 二维 DP | 一维优化 |
-|------|---------|---------|
-| 时间 | $O(nW)$ | $O(nW)$ |
-| 空间 | $O(nW)$ | $O(W)$ |
-`
-  },
-  {
-    id: "trie-implementation",
-    content: `---
-title: 实现 Trie（前缀树）
-difficulty: medium
-tags: [字典树, 字符串, 设计]
----
-
-# 实现 Trie（前缀树）
-
-## 题目描述
-
-Trie（前缀树）是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。请你实现 Trie 类：
-
-- \`Trie()\` 初始化前缀树对象
-- \`void insert(string word)\` 向前缀树中插入字符串 \`word\`
-- \`boolean search(string word)\` 如果字符串 \`word\` 在前缀树中，返回 \`true\`
-- \`boolean startsWith(string prefix)\` 如果之前已经插入的字符串 \`word\` 的前缀之一为 \`prefix\`，返回 \`true\`
-
-## 数据结构
-
-每个节点包含 26 个子节点指针和一个标记是否为单词结尾的 \`isEnd\`。
-
-## 代码实现
-
-\`\`\`cpp
-class Trie {
-private:
-    struct TrieNode {
-        TrieNode* children[26] = {nullptr};
-        bool isEnd = false;
-    };
-    TrieNode* root;
-
-public:
-    Trie() : root(new TrieNode()) {}
-
-    void insert(string word) {
-        TrieNode* node = root;
-        for (char c : word) {
-            int idx = c - 'a';
-            if (!node->children[idx]) {
-                node->children[idx] = new TrieNode();
-            }
-            node = node->children[idx];
-        }
-        node->isEnd = true;
-    }
-
-    bool search(string word) {
-        TrieNode* node = find(word);
-        return node && node->isEnd;
-    }
-
-    bool startsWith(string prefix) {
-        return find(prefix) != nullptr;
-    }
-
-private:
-    TrieNode* find(const string& s) {
-        TrieNode* node = root;
-        for (char c : s) {
-            int idx = c - 'a';
-            if (!node->children[idx]) return nullptr;
-            node = node->children[idx];
-        }
-        return node;
-    }
-};
-\`\`\`
-
-## 复杂度分析
-
-- **插入/查询时间**：$O(L)$，$L$ 为字符串长度。
-- **空间**：$O(\\Sigma \\cdot L \\cdot N)$。
-
-## 应用场景
-
-- 自动补全
-- 拼写检查
-- IP 路由最长前缀匹配
-`
-  },
-  {
-    id: "dijkstra",
-    content: `---
-title: Dijkstra 最短路径
-difficulty: medium
-tags: [图论, 最短路径, 堆]
----
-
-# Dijkstra 单源最短路径
-
-## 算法思想
-
-Dijkstra 算法用于求解**非负权图**上单源最短路径问题。核心是贪心 + 优先队列：
-
-1. 初始化源点距离为 0，其余为无穷大；
-2. 每次取出未访问节点中距离最小的节点 $u$；
-3. 用 $u$ 松弛其所有邻边；
-4. 重复直到所有节点被访问。
-
-## 代码实现（堆优化）
-
-\`\`\`cpp
-struct Edge { int to, w; };
-using PII = pair<int, int>; // (距离, 节点)
-
-vector<int> dijkstra(int n, int src, vector<vector<Edge>>& adj) {
-    vector<int> dist(n + 1, INT_MAX);
-    priority_queue<PII, vector<PII>, greater<PII>> pq;
-
-    dist[src] = 0;
-    pq.push({0, src});
-
-    while (!pq.empty()) {
-        auto [d, u] = pq.top(); pq.pop();
-        if (d > dist[u]) continue; // 过期记录
-        for (auto& e : adj[u]) {
-            if (dist[u] + e.w < dist[e.to]) {
-                dist[e.to] = dist[u] + e.w;
-                pq.push({dist[e.to], e.to});
-            }
-        }
-    }
-    return dist;
-}
-\`\`\`
-
-## 复杂度分析
-
-- **时间复杂度**：$O((V+E) \\log V)$。
-- **空间复杂度**：$O(V+E)$。
-
-> 注意：Dijkstra 不能处理负权边，负权图请使用 Bellman-Ford 或 SPFA。
-`
-  },
-  {
-    id: "quick-sort",
-    content: `---
-title: 快速排序
-difficulty: easy
-tags: [排序, 分治, 双指针]
----
-
-# 快速排序
-
-## 算法思想
-
-快速排序采用**分治**策略：
-
-1. **选取基准**：从数组中选一个元素 \`pivot\`；
-2. **分区**：将小于 pivot 的放左边，大于的放右边；
-3. **递归**：对左右子数组递归排序。
-
-## 代码实现
-
-\`\`\`cpp
-class QuickSort {
-public:
-    void sort(vector<int>& nums) {
-        quickSort(nums, 0, nums.size() - 1);
-    }
-
-private:
-    void quickSort(vector<int>& nums, int left, int right) {
-        if (left >= right) return;
-        int pivot = partition(nums, left, right);
-        quickSort(nums, left, pivot - 1);
-        quickSort(nums, pivot + 1, right);
-    }
-
-    int partition(vector<int>& nums, int left, int right) {
-        int pivot = nums[right]; // 取最右为基准
-        int i = left - 1;
-        for (int j = left; j < right; ++j) {
-            if (nums[j] <= pivot) {
-                swap(nums[++i], nums[j]);
-            }
-        }
-        swap(nums[i + 1], nums[right]);
-        return i + 1;
-    }
-};
-\`\`\`
-
-## 复杂度分析
-
-| 情况 | 时间复杂度 |
+| 时间 | 记忆保留率 |
 |------|-----------|
-| 最好 | $O(n \\log n)$ |
-| 平均 | $O(n \\log n)$ |
-| 最坏 | $O(n^2)$（已排序 + 固定基准） |
+| 20 分钟 | 58% |
+| 1 小时 | 44% |
+| 1 天 | 33% |
+| 1 周 | 25% |
 
-- **空间复杂度**：$O(\\log n)$（递归栈）。
+对抗遗忘的方法就是**间隔重复**：在快要忘记的时候复习，而不是一次性死记硬背。
 
-## 优化技巧
+## 三、专注的力量
 
-1. **随机基准**：避免最坏情况；
-2. **三数取中**：选首、中、尾的中位数；
-3. **小区间插入排序**：递归深度大时切换。
+现代社会最大的敌人不是信息匮乏，而是**注意力分散**。
+
+我的几个小习惯：
+
+1. 学习时关闭所有通知
+2. 用番茄钟保持 25 分钟专注
+3. 一次只做一件事
+4. 每天留一段不被打扰的"深度时间"
+
+## 四、保持好奇心
+
+最后，也是最重要的一点——**保持好奇**。
+
+当你对一个话题真正感兴趣时，学习不再是负担，而是探索。找到那件让你"欲罢不能"的事，然后深入下去。
+
+> 成长不是一蹴而就的爆发，而是日复一日的积累。
+`
+  },
+  {
+    id: "markdown-guide",
+    content: `---
+title: Markdown 写作完全指南
+category: 技术
+tags: [Markdown, 写作, 工具]
+---
+
+# Markdown 写作完全指南
+
+Markdown 是一种轻量级标记语言，用纯文本格式编写文档。它语法简单、可读性强，已经成为技术写作的事实标准。
+
+## 基础语法速查
+
+### 标题
+
+\`\`\`markdown
+# 一级标题
+## 二级标题
+### 三级标题
+\`\`\`
+
+### 强调
+
+\`\`\`markdown
+**粗体**  *斜体*  ~~删除线~~
+\`\`\`
+
+渲染效果：**粗体**  *斜体*  ~~删除线~~
+
+### 列表
+
+- 无序列表项一
+- 无序列表项二
+  - 嵌套项
+
+1. 有序列表
+2. 第二项
+
+### 代码
+
+行内代码：\`const x = 1;\`
+
+代码块：
+
+\`\`\`javascript
+function hello() {
+  console.log("Hello, Markdown!");
+}
+\`\`\`
+
+### 链接与图片
+
+\`\`\`markdown
+[链接文本](https://example.com)
+![图片描述](image.jpg)
+\`\`\`
+
+## 进阶技巧
+
+### 表格
+
+| 语法 | 说明 |
+|------|------|
+| \`#\` | 标题 |
+| \`**\` | 粗体 |
+| \`>\` | 引用 |
+
+### 任务列表
+
+- [x] 已完成的任务
+- [ ] 未完成的任务
+
+### 引用块
+
+> 这是一段引用。
+>
+> 可以用来突出重要内容。
+
+## 写作建议
+
+1. **善用标题层级**：让文章结构清晰
+2. **适当留白**：段落之间空一行，阅读更舒适
+3. **代码要标注语言**：方便语法高亮
+4. **配图说明**：一图胜千言
+
+> Markdown 的精髓在于：让写作者专注于内容，而不是排版。
+`
+  },
+  {
+    id: "reading-habits",
+    content: `---
+title: 我是如何养成阅读习惯的
+category: 生活
+tags: [阅读, 习惯, 生活]
+---
+
+# 我是如何养成阅读习惯的
+
+曾经我也是一个"买书如山倒，读书如抽丝"的人。书架上堆满了未拆封的书，kindle 里存了几百本却没翻过几本。
+
+直到我开始做一些小改变。
+
+## 1. 降低开始的门槛
+
+不要想着"每天读一小时"，而是告诉自己"只读 5 分钟"。
+
+5 分钟很短，短到你没有理由拒绝。而一旦翻开书，往往就读了半小时。**关键是开始**。
+
+## 2. 把书放在显眼的地方
+
+床头、沙发、茶几——只要你经常待的地方，都放一本书。
+
+> 视线所及，便是心之所向。
+
+当你随手就能拿到书时，阅读就变成了自然而然的事。
+
+## 3. 不喜欢就放弃
+
+很多人觉得"开卷有益"，硬着头皮读不喜欢的书。其实完全没必要。
+
+- 读不下去？换一本。
+- 读到一半觉得无聊？放下也没关系。
+- 一本书不必从头读到尾。
+
+**阅读应该是享受，不是任务。**
+
+## 4. 做笔记，但别强求
+
+我会在书里划线，偶尔写几句感想。但我不会强迫自己做工整的读书笔记。
+
+如果一本书能让你记住一句话、一个观点，那它就已经值了。
+
+## 5. 接受自己的节奏
+
+有人一年读 100 本，有人一年读 10 本。这没有高下之分。
+
+重要的不是数量，而是你从阅读中获得了什么。
+
+> 读书不是为了炫耀，而是为了遇见更好的自己。
+`
+  },
+  {
+    id: "minimalist-digital-life",
+    content: `---
+title: 我的数字极简主义实践
+category: 随笔
+tags: [极简主义, 效率, 数字生活]
+---
+
+# 我的数字极简主义实践
+
+手机通知不断弹出、邮箱堆满未读、收藏夹里躺着几百条"稍后再看"——这大概是很多人的日常。
+
+我尝试过一种叫做**数字极简主义**的生活方式，效果出奇地好。
+
+## 什么是数字极简主义
+
+数字极简主义不是"不用手机"，而是：
+
+> 有意识地选择哪些工具值得占用你的注意力，然后无情地砍掉其余的。
+
+## 我的具体做法
+
+### 清理通知
+
+我关闭了几乎所有 App 的推送通知，只保留：
+- 电话和短信
+- 日历提醒
+- 少数几个真正重要的应用
+
+结果：每天被打断的次数从几十次降到个位数。
+
+### 精简应用
+
+手机首页只留一页，常用 App 不超过 12 个。删掉了：
+- 刷不完的短视频
+- 重复的笔记应用
+- 从来不用的"效率工具"
+
+### 信息源做减法
+
+- 取消关注了 80% 的公众号
+- 退订了所有促销邮件
+- 社交媒体只在固定时间段打开
+
+## 效果
+
+| 指标 | 之前 | 之后 |
+|------|------|------|
+| 日均屏幕时间 | 6 小时 | 2.5 小时 |
+| 深度工作时长 | 1 小时 | 4 小时 |
+| 焦虑感 | 高 | 低 |
+
+## 一点思考
+
+信息时代，**注意力是最稀缺的资源**。
+
+每一个推送、每一条通知，都是在争夺你的注意力。而你的注意力，决定了你能成为什么样的人。
+
+> 少即是多。不是拥有更少，而是专注更重要的。
 `
   }
 ];
