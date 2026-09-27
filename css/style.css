@@ -448,6 +448,7 @@ mark { background: rgba(99,102,241,.3); color: inherit; border-radius: 2px; }
   .search-box { width: 160px; }
   .features { grid-template-columns: 1fr; }
   .doc { padding: 24px 20px 60px; }
+  .ad-banner iframe { width: 100% !important; }
 }
 
 /* 加载骨架 */
