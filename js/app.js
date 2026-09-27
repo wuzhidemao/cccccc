@@ -20,6 +20,21 @@
 
   const STORAGE_KEY = 'codevault_state_v1';
 
+  /* ---------------- Giscus 评论系统配置 ---------------- */
+  // 数据存储于 GitHub Discussions，访客需 GitHub 账号评论
+  const GISCUS = {
+    repo: 'wuzhidemao/cccccc',
+    repoId: 'R_kgDOUgOMig',
+    category: 'Announcements',
+    categoryId: 'DIC_kwDOUgOMis4DGgnw',
+    mapping: 'pathname',
+    strict: '0',
+    reactionsEnabled: '1',
+    emitMetadata: '0',
+    inputPosition: 'bottom',
+    lang: 'zh-CN',
+  };
+
   /* ---------------- 工具函数 ---------------- */
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
@@ -81,6 +96,8 @@
       if (hl) hl.href = next === 'dark'
         ? 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css'
         : 'https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-light.min.css';
+      // 同步 Giscus 评论主题
+      syncGiscusTheme();
       saveState();
     });
   }
@@ -320,6 +337,47 @@
     });
   }
 
+  /* ---------------- Giscus 评论加载 ---------------- */
+  function loadGiscus(container) {
+    // 未配置 repoId / categoryId 时不加载，避免报错
+    if (!GISCUS.repoId || !GISCUS.categoryId) {
+      container.innerHTML = '<div class="comments-hint">💬 评论系统暂未配置，请在 <code>js/app.js</code> 的 <code>GISCUS</code> 对象中填入 <code>repoId</code> 和 <code>categoryId</code>（前往 <a href="https://giscus.app" target="_blank" rel="noopener">giscus.app</a> 获取）。</div>';
+      return;
+    }
+    // 清理已有评论
+    container.innerHTML = '';
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    script.setAttribute('data-repo', GISCUS.repo);
+    script.setAttribute('data-repo-id', GISCUS.repoId);
+    script.setAttribute('data-category', GISCUS.category);
+    script.setAttribute('data-category-id', GISCUS.categoryId);
+    script.setAttribute('data-mapping', GISCUS.mapping);
+    script.setAttribute('data-strict', GISCUS.strict);
+    script.setAttribute('data-reactions-enabled', GISCUS.reactionsEnabled);
+    script.setAttribute('data-emit-metadata', GISCUS.emitMetadata);
+    script.setAttribute('data-input-position', GISCUS.inputPosition);
+    script.setAttribute('data-theme', getGiscusTheme());
+    script.setAttribute('data-lang', GISCUS.lang);
+    container.appendChild(script);
+  }
+
+  function getGiscusTheme() {
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  }
+
+  // 切换主题时通知 Giscus 同步
+  function syncGiscusTheme() {
+    const iframe = document.querySelector('iframe.giscus-frame');
+    if (!iframe) return;
+    iframe.contentWindow.postMessage(
+      { giscus: { setConfig: { theme: getGiscusTheme() } } },
+      'https://giscus.app'
+    );
+  }
+
   /* ---------------- 打开文章 ---------------- */
   function openPost(id) {
     const s = state.posts.find(x => x.id === id);
@@ -363,6 +421,14 @@
 
     postProcessDoc(docArea);
     buildTOC(docArea);
+
+    // 评论区
+    const commentsSection = el('section', { class: 'comments' });
+    commentsSection.appendChild(el('h3', { class: 'comments-title' }, '💬 评论'));
+    const giscusContainer = el('div', { class: 'giscus' });
+    commentsSection.appendChild(giscusContainer);
+    docArea.appendChild(commentsSection);
+    loadGiscus(giscusContainer);
 
     // 搜索高亮
     if (state.searchQuery) highlightSearch(body);
