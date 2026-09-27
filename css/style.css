@@ -388,6 +388,7 @@ input { font-family: inherit; }
   padding: 3px 10px; border-radius: 999px;
   background: var(--bg-elev-2); border: 1px solid var(--border);
 }
+.doc-date { color: var(--text-muted); font-size: 12px; }
 .doc-actions { display: flex; gap: 8px; margin-top: 16px; }
 .doc-actions .btn { height: 32px; font-size: 12px; }
 
