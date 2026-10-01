@@ -681,14 +681,11 @@
     setupTabs();
     setupScrollSpy();
 
-    // 优先从 GitHub Issues 加载文章（发 Issue = 发文章）
-    // 失败则回退到 posts/ 目录，再失败回退到内置示例
-    const loaded = await loadFromGitHubIssues();
-    if (!loaded) {
-      const ok = await loadFromManifest();
-      if (!ok && state.posts.length === 0) {
-        loadFromSamples();
-      }
+    // 文章从本地 posts/ 目录加载（manifest.json 清单）
+    // 若 posts/ 加载失败，则回退到内置示例
+    const loaded = await loadFromManifest();
+    if (!loaded && state.posts.length === 0) {
+      loadFromSamples();
     }
 
     // 若 URL 中指定了文章（?post=xxx），则打开该文章
