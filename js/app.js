@@ -399,6 +399,9 @@
     state.read.add(id);
     saveState();
 
+    // 移动端：选中文章后自动收起侧边栏
+    if (typeof state._closeSidebar === 'function') state._closeSidebar();
+
     // 更新地址栏，每篇文章拥有独立 URL（?post=文章ID）
     if (pushState !== false) {
       const url = new URL(window.location);
@@ -552,6 +555,38 @@
     });
   }
 
+  /* ---------------- 移动端侧边栏切换 ---------------- */
+  function setupSidebar() {
+    const sidebar = $('.sidebar');
+    const backdrop = $('#sidebarBackdrop');
+    const toggleBtn = $('#sidebarToggle');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      backdrop.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      if (sidebar.classList.contains('open')) closeSidebar();
+      else openSidebar();
+    });
+    backdrop.addEventListener('click', closeSidebar);
+
+    // 窗口变大到桌面端时，自动关闭侧边栏并清除遮罩
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) closeSidebar();
+    });
+
+    // 暴露给 openPost 使用
+    state._closeSidebar = closeSidebar;
+  }
+
   /* ---------------- 从静态目录加载文章（适合部署到静态托管） ---------------- */
   // 在站点根目录放置 posts/manifest.json，内容为 { "files": ["a.md", "b.md"] }
   // 站点会自动 fetch 这些 .md 文件并加载，访问者无需手动上传
@@ -671,6 +706,7 @@
     initTheme();
     setupSearch();
     setupTabs();
+    setupSidebar();
     setupScrollSpy();
 
     // 文章从本地 posts/ 目录加载（manifest.json 清单）
