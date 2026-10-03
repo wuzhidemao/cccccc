@@ -114,10 +114,16 @@
       const block = m[1];
       const titleM = block.match(/^title:\s*(.+)$/m);
       const catM = block.match(/^category:\s*(.+)$/m) || block.match(/^difficulty:\s*(.+)$/m);
-      const tagsM = block.match(/^tags:\s*\[([^\]]*)\]/m);
+      // 支持两种 tags 格式：内联 [a, b] 和 YAML 列表
+      const tagsInline = block.match(/^tags:\s*\[([^\]]*)\]/m);
+      const tagsList = block.match(/^tags:\s*\n((?:\s*-\s*.+\n?)+)/m);
       if (titleM) meta.title = titleM[1].trim().replace(/^["']|["']$/g, '');
       if (catM) meta.category = catM[1].trim();
-      if (tagsM) meta.tags = tagsM[1].split(',').map(s => s.trim()).filter(Boolean);
+      if (tagsInline) {
+        meta.tags = tagsInline[1].split(',').map(s => s.trim()).filter(Boolean);
+      } else if (tagsList) {
+        meta.tags = tagsList[1].split('\n').map(s => s.replace(/^\s*-\s*/, '').trim()).filter(Boolean);
+      }
       meta.content = md.slice(m[0].length);
     } else {
       meta.content = md;
